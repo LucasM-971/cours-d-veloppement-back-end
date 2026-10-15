@@ -1,4 +1,5 @@
 const express = require('express');
+const path = require('path');
 const app = express();
 const port = 3000;
 
@@ -11,9 +12,16 @@ app.use(express.json());
         {title: 'Task 3', description: 'Description for Task 3', isDone : false }
     ];
 
+function loggerMiddleware(req, res, next) {
+    console.log("Nouvelle requete entrante");
+    next();
+}
+
+app.use(loggerMiddleware);
+app.use(express.static('public'));
 
 app.get('/', (req, res) => {
-  res.send('Hello World!');
+    res.sendFile(path.join(__dirname, 'templates', 'index.html'));
 });
 
 app.get('/some-html', (req, res) => {
@@ -63,7 +71,9 @@ app.delete('/delete-task/:taskId', (req, res) => {
     res.send('Task deleted successfully');
 });
 
-
+app.get('/hello', (req, res) => {
+    res.send('`<html><body><h1>Hello</h1></body></html> `');
+});
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
 });
